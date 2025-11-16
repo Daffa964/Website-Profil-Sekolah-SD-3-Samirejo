@@ -34,6 +34,35 @@
                                 <input type="radio" name="jk" <?php if (isset($jk) && $jk == "pr") echo "checked"; ?> value="pr">Perempuan
                             </div>
                         </div>
+                        <hr>
+<h4>Data Akun (Untuk Login Guru)</h4>
+<div class="form-group">
+    <label>Username</label>
+    <input type="text" name="username" class="form-control" placeholder="Masukan Username">
+</div>
+
+<div class="form-group">
+    <label>Password</label>
+    <input type="password" name="password" class="form-control">
+</div>
+
+<div class="form-group">
+    <label>Wali Kelas Untuk</label>
+    <select name="id_kelas" class="form-control">
+        <option value="">-- Bukan Wali Kelas --</option>
+        <?php
+        $sql_kelas = mysqli_query($koneksi, "SELECT * FROM tb_kelas");
+        while ($k = mysqli_fetch_array($sql_kelas)) {
+            // Di file edit_guru.php, tambahkan seleksi ini:
+            // $selected = ($data['id_kelas'] == $k['id_kelas']) ? 'selected' : '';
+            // echo "<option value='$k[id_kelas]' $selected>$k[kelas]</option>";
+
+            // Untuk file add_guru.php:
+            echo "<option value='$k[id_kelas]'>$k[kelas]</option>";
+        }
+        ?>
+    </select>
+</div>
                 </div>
                 <div class="col">
                     <div class="form-group">
@@ -72,34 +101,53 @@
 
 <?php
 if (isset($_POST['saveGuru'])) {
-    $id         = $_POST['id_guru'];
-    $nip         = $_POST['nip'];
-    $guruname    = $_POST['nama_guru'];
+    // Ambil data dari form
+    $nip         = mysqli_real_escape_string($koneksi, $_POST['nip']);
+    $guruname    = mysqli_real_escape_string($koneksi, $_POST['nama_guru']);
+    $tgl         = mysqli_real_escape_string($koneksi, $_POST['tanggal_lahir']);
+    $tempat      = mysqli_real_escape_string($koneksi, $_POST['tempat_lahir']);
+    $jk          = mysqli_real_escape_string($koneksi, $_POST['jk']);
+    $hp          = mysqli_real_escape_string($koneksi, $_POST['nohp']);
+    $email       = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $jabatan     = mysqli_real_escape_string($koneksi, $_POST['jabatan']);
+    $golongan    = mysqli_real_escape_string($koneksi, $_POST['golongan']);
+    $nuptk       = mysqli_real_escape_string($koneksi, $_POST['nuptk']);
+
+    // Ambil data akun
+    $username = mysqli_real_escape_string($koneksi, $_POST['username']);
+    $id_kelas = $_POST['id_kelas']; // bisa kosong
+    if (empty($id_kelas)) {
+        $id_kelas_sql = "NULL";
+    } else {
+        $id_kelas_sql = "'$id_kelas'";
+    }
+
+    // HASH password (jangan simpan polos!)
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+    // Upload foto (jika ada)
     $sumber       = @$_FILES['foto']['tmp_name'];
     $target       = '../assets/sumber/img/guru/';
     $nama_gambar  = @$_FILES['foto']['name'];
     $pindah       = move_uploaded_file($sumber, $target . $nama_gambar);
-    $tgl         = $_POST['tanggal_lahir'];
-    $tempat      = $_POST['tempat_lahir'];
-    $jk          = $_POST['jk'];
-    $hp          = $_POST['nohp'];
-    $email       = $_POST['email'];
-    $jabatan     = $_POST['jabatan'];
-    $golongan    = $_POST['golongan'];
-    $nuptk       = $_POST['nuptk'];
 
-
-    //query INSERT disini
-    $nama = addslashes($_POST['nama_guru']);
-    $save = mysqli_query($koneksi, "INSERT INTO tb_guru VALUES(NULL,'$nip',
-	          	'$guruname','$nama_gambar','$tgl','$tempat','$jk','$hp','$email','$jabatan','$golongan','$nuptk')");
+    // Jalankan query INSERT baru
+    $query = "INSERT INTO tb_guru 
+        (nip, nama_guru, username, password, foto, tgl_lahir, tempat_lahir, jk, nohp, email, jabatan, golongan, nuptk, id_kelas)
+        VALUES 
+        ('$nip', '$guruname', '$username', '$password', '$nama_gambar', '$tgl', '$tempat', '$jk', '$hp', '$email', '$jabatan', '$golongan', '$nuptk', $id_kelas_sql)";
+    
+    $save = mysqli_query($koneksi, $query);
 
     if ($save) {
-        echo " <script>
-	          alert('Data Berhasil disimpan !');
-	          window.location='?page=guru';
-	          </script>";
+        echo "<script>
+            alert('Data Berhasil disimpan!');
+            window.location='?page=guru';
+        </script>";
+    } else {
+        echo "<script>
+            alert('Gagal menyimpan data: " . mysqli_error($koneksi) . "');
+        </script>";
     }
 }
-
 ?>

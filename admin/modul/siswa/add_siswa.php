@@ -40,6 +40,14 @@
                     <input type="text" class="form-control" placeholder="Masukkan Alamat" name="alamat" required>
                 </div>
                 <div class="form-group">
+                    <label>Nama Wali Murid</label>
+                    <input type="text" name="nama_wali" class="form-control" placeholder="Masukan Nama Wali">
+                </div>
+                <div class="form-group">
+                    <label>No. HP Wali (Format: 628...)</label>
+                    <input type="text" name="nohp_wali" class="form-control" placeholder="Contoh: 628123456789">
+                </div>
+                <div class="form-group">
                     <label>Kelas Siswa</label>
                     <select class="form-control" name="id_kelas" required>
                         <option value=''>-- Pilih --</option>
@@ -73,6 +81,8 @@ if (isset($_POST['SaveSiswa'])) {
     $tanggal = $_POST['tanggal_lahir'];  // Tidak perlu escape karena date format
     $jk = $_POST['jk']; // Hanya memiliki dua pilihan, aman langsung digunakan
     $alamat = mysqli_real_escape_string($koneksi, $_POST['alamat']);
+    $nama_wali = mysqli_real_escape_string($koneksi, $_POST['nama_wali']);
+    $nohp_wali = mysqli_real_escape_string($koneksi, $_POST['nohp_wali']);
     $kelas = $_POST['id_kelas'];
 
     // Query INSERT dengan kolom yang sesuai

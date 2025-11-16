@@ -58,8 +58,12 @@ $oke1 = mysqli_fetch_array($oke);
                                         </div>
 
                                         <hr>
-                                        <button type="submit" value="LOGIN" name="Login" class="btn btn-primary btn-lg btn-block rounded-pill">Login</button>
-                                        <!-- <a href="register_guru.php" class="btn btn-success btn-lg btn-block rounded-pill">Registrasi Guru</a> -->
+                                        <button type="submit" value="LOGIN" name="Login" class="btn btn-primary btn-lg btn-block rounded-pill">Login Admin</button>
+                                        <hr>
+                                        <div class="text-center">
+                                            <a href="login_guru.php">Login sebagai Wali Kelas</a>
+                                        </div>
+                                    </form><!-- <a href="register_guru.php" class="btn btn-success btn-lg btn-block rounded-pill">Registrasi Guru</a> -->
                                     </form>
                                 </div>
                             </div>

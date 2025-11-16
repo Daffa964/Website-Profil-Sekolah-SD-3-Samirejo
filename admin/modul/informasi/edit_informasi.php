@@ -43,23 +43,37 @@ while ($d = mysqli_fetch_array($data)) {
             <?php
 
             if (isset($_POST['updateInfo'])) {
-                $gambar = @$_FILES['foto']['name'];
+
+                // Escape semua input agar aman
+                $id     = intval($_POST['id_informasi']);
+                $judul  = mysqli_real_escape_string($koneksi, $_POST['judul_informasi']);
+                $tgl    = mysqli_real_escape_string($koneksi, $_POST['tgl_informasi']);
+                $isi    = mysqli_real_escape_string($koneksi, $_POST['isi_informasi']);
+
+                // Upload foto jika ada
+                $gambar = $_FILES['foto']['name'];
                 if (!empty($gambar)) {
                     move_uploaded_file($_FILES['foto']['tmp_name'], "../assets/sumber/img/berita/$gambar");
-                    $ganti = mysqli_query($koneksi, "UPDATE tb_informasi SET foto='$gambar' 
-	    	WHERE id_informasi='$_POST[id_informasi]' ");
+                    mysqli_query($koneksi, "UPDATE tb_informasi SET foto='$gambar' WHERE id_informasi='$id'");
                 }
-                $updateInfo = mysqli_query($koneksi, "UPDATE tb_informasi SET 
-			judul_informasi='$_POST[judul_informasi]',tgl_informasi='$_POST[tgl_informasi]', isi_informasi='$_POST[isi_informasi]'
-			WHERE id_informasi='$_POST[id_informasi]' ");
+
+                // UPDATE aman
+                $updateInfo = mysqli_query($koneksi, "
+        UPDATE tb_informasi SET 
+            judul_informasi='$judul',
+            tgl_informasi='$tgl',
+            isi_informasi='$isi'
+        WHERE id_informasi='$id'
+    ");
 
                 if ($updateInfo) {
-                    echo " <script>
-	  alert('Data Berhasil diperbarui !');
-	  window.location='?page=berita';
-	  </script>";
+                    echo "<script>
+            alert('Data Berhasil diperbarui !');
+            window.location='?page=berita';
+        </script>";
                 }
             }
+
 
             ?>
 

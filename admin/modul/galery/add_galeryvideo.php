@@ -1,64 +1,73 @@
-<div class="container mt-3">
-    <div class="card">
-        <h5 class="card-header text-center">Tambah Data Gallery</h5>
-        <div class="card-body">
-            <form action="" method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label>Keterangan</label>
-                    <input type="text" class="form-control" placeholder="Keterangan Video" name="keterangan" required="required">
-                </div>
-                <div class="form-group">
-                    <label>Video</label>
-                    <input type="file" name="video" required="required">
-                    <p style="color: red">Ekstensi yang diperbolehkan .mp4 | .3gp | .mov | .mpeg dengan ukuran maksimal 100 mb</p>
-                </div>
-                <button name="saveVideo" type="submit" class="btn btn-primary mr-2">Simpan</button>
-                <?php
-                $url = htmlspecialchars($_SERVER['HTTP_REFERER']);
-                ?>
-                <a href="<?= $url ?>" class="btn btn-danger mr-2">Batal</a>
-            </form>
+<?php
+// Proses Simpan Link YouTube
+if (isset($_POST['save'])) {
+    $keterangan = mysqli_real_escape_string($koneksi, $_POST['keterangan']);
+    
+    // Ambil link video dari form
+    $link_video = mysqli_real_escape_string($koneksi, $_POST['video_link']);
+
+    // Query INSERT ke database
+    // Kita simpan LINK-nya di kolom 'video', dan 'foto' kita set ke '0'
+    $sql = mysqli_query($koneksi, "INSERT INTO tb_gallery (keterangan, jenis, foto, video) 
+                            VALUES ('$keterangan', '2', '0', '$link_video')");
+
+    if ($sql) {
+        echo "
+        <script>
+            alert('Data Video YouTube Berhasil Disimpan');
+            window.location='?page=galery';
+        </script>
+        ";
+    } else {
+        echo "
+        <script>
+            alert('Gagal Menyimpan Data. Error: " . mysqli_error($koneksi) . "');
+            window.location='?page=galery&act=addvideo';
+        </script>
+        ";
+    }
+}
+?>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <strong>Upload Video Baru</strong>
+            </div>
+            <div class="card-body card-block">
+                <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="keterangan" class="form-control-label">Keterangan Video</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <textarea name="keterangan" id="keterangan" rows="4" placeholder="Keterangan singkat video..." class="form-control" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row form-group">
+                        <div class="col col-md-3">
+                            <label for="video_link" class="form-control-label">Link Video YouTube</label>
+                        </div>
+                        <div class="col-12 col-md-9">
+                            <input type="text" id="video_link" name="video_link" placeholder="Contoh: https://youtu.be/O5hac_3mZKg" class="form-control" required>
+                            <small class="form-text text-muted">
+                                Salin link dari YouTube (bisa link `youtu.be` atau `youtube.com/watch?v=...`)
+                                <br>
+                                <b>PENTING:</b> Pastikan visibilitas video di YouTube adalah <b>Unlisted (Tidak Publik)</b> atau <b>Public</b>. Jangan di-set Private.
+                            </small>
+                        </div>
+                    </div>
+                    <hr>
+                    <button type="submit" name="save" class="btn btn-primary">
+                        <i class="fa fa-save"></i> Simpan Video
+                    </button>
+                    <a href="?page=galery" class="btn btn-danger">
+                        <i class="fa fa-times"></i> Batal
+                    </a>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-
-<?php
-if (isset($_POST['saveVideo'])) {
-
-    $maxsize = 10242880; // 10MB
-
-    $name = $_FILES['video']['name'];
-    $target_dir = "../assets/sumber/img/gallery/video/";
-    $target_file = $target_dir . $_FILES["video"]["name"];
-
-    // Select file type
-    $videoFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-    // Valid file extensions
-    $extensions_arr = array("mp4", "avi", "3gp", "mov", "mpeg");
-    $keterangan         = $_POST['keterangan'];
-    // Check extension
-    if (in_array($videoFileType, $extensions_arr)) {
-
-        // Check file size
-        if (($_FILES['video']['size'] >= $maxsize) || ($_FILES["video"]["size"] == 0)) {
-            echo "File too large. File must be less than 5MB.";
-        } else {
-            // Upload
-            if (move_uploaded_file($_FILES['video']['tmp_name'], $target_file)) {
-                // Insert record
-                $query = mysqli_query($koneksi, "INSERT INTO tb_gallery VALUES(NULL, '$keterangan', '2', '0', '$name')");
-            }
-        }
-    } else {
-        echo "Invalid file extension.";
-    }
-        {echo " <script>
-              alert('Data Berhasil disimpan !');
-              window.location='?page=galery';
-              </script>";
-    }
-}
-
-
-?>

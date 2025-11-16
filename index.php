@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <?php
 include 'config/koneksi.php';
 $oke = mysqli_query($koneksi, "SELECT * FROM tb_sekolah");
@@ -7,9 +8,10 @@ setlocale(LC_TIME, 'id_ID.utf8');
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" >
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <title><?= $oke1['nama_sekolah'] ?></title>
   <link rel="shortcut icon" type="image/png" href="assets/sumber/img/app/<?= $oke1['foto_logo'] ?>" />
@@ -56,7 +58,7 @@ setlocale(LC_TIME, 'id_ID.utf8');
           <li class="drop-down"><a href="">Profil</a>
             <ul>
               <li><a href="?page=profil&act=sejarah">Sejarah</a></li>
-              <li><a href="?page=profil">Visi & Misi </a></li>
+              <li><a href="?page=profil">Visi & Misi</a></li>
               <li><a href="?page=profil&act=akreditasi">Akreditasi</a></li>
               <li><a href="?page=profil&act=kurikulum">Kurikulum</a></li>
               <li><a href="?page=profil&act=ekstrakurikuler">Jenis Ekstrakurikuler</a></li>
@@ -70,7 +72,6 @@ setlocale(LC_TIME, 'id_ID.utf8');
               <li><a href="?page=fasilitas&act=pustaka">Perpustakaan</a></li>
             </ul>
           </li>
-
           <li class="drop-down"><a href="">Guru</a>
             <ul>
               <li><a href="?page=guru">Data Guru</a></li>
@@ -104,8 +105,18 @@ setlocale(LC_TIME, 'id_ID.utf8');
               <li><a href="?page=bukutamu&act=hal">Data Buku Tamu</a></li>
               <li><a href="?page=bukutamu">Isi Tamu</a></li>
             </ul>
+          </li>
+
+          <li class="drop-down"><a href="">Wali Murid</a>
+            <ul>
+              <li><a href="?page=cek-login-wali">Login Wali</a></li>
+              <li><a href="?page=portal-wali">Portal Wali</a></li>
+              <li><a href="?page=cek-absensi">Cek Absensi</a></li>
+            </ul>
+          </li>
         </ul>
-      </nav><!-- .nav-menu -->
+      </nav>
+
 
     </div>
   </header><!-- End Header -->
@@ -216,13 +227,19 @@ setlocale(LC_TIME, 'id_ID.utf8');
       if ($act == '') {
         include 'login.php';
       }
+    } elseif ($page == 'cek-absensi') {
+      include 'data/wali/cek_absensi.php';
+    } elseif ($page == 'cek-login-wali') {
+      include 'data/wali/proses_login.php';
+    } elseif ($page == 'portal-wali') {
+      include 'data/wali/portal.php';
     } elseif ($page == '') {
       include 'home.php';
     } else {
-      echo "<b>404!</b> Tidak ada halaman !";
+      echo "<b>404!</b> Tidak ada halaman!";
     }
-
     ?>
+
 
   </main><!-- End #main -->
 
@@ -231,7 +248,7 @@ setlocale(LC_TIME, 'id_ID.utf8');
     <div class="footer-top">
       <div class="container">
         <div class="row">
-       
+
           <div class="col-lg-6 col-md-6 footer-info">
             <h3><?= $oke1['nama_sekolah'] ?></h3>
             <p>
@@ -282,4 +299,5 @@ setlocale(LC_TIME, 'id_ID.utf8');
   <!-- Page level custom scripts -->
   <script src="assets/assets2/js/demo/datatables-demo.js"></script>
 </body>
+
 </html>

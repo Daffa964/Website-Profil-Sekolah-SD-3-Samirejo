@@ -34,24 +34,44 @@
 <?php
 if (isset($_POST['saveBerita'])) {
 
-    $judul_informasi   = $_POST['judul_informasi'];
+    // Escape semua input
+    $judul_informasi = mysqli_real_escape_string($koneksi, $_POST['judul_informasi']);
+    $isi             = mysqli_real_escape_string($koneksi, $_POST['isi_informasi']);
+
     date_default_timezone_set("Asia/Jakarta");
-    $tanggal                = date("Y-m-d");
-    $isi            = $_POST['isi_informasi'];
+    $tanggal = date("Y-m-d");
+
+    // Upload foto
     $sumber       = @$_FILES['foto']['tmp_name'];
     $target       = '../assets/sumber/img/berita/';
     $nama_gambar  = @$_FILES['foto']['name'];
     $pindah       = move_uploaded_file($sumber, $target . $nama_gambar);
 
-    //query INSERT disini
-    $save = mysqli_query($koneksi, "INSERT INTO tb_informasi VALUES(NULL,'$judul_informasi','$tanggal','$isi','berita','$nama_gambar')");
+    // Query INSERT aman
+    $save = mysqli_query($koneksi, "
+        INSERT INTO tb_informasi (
+            judul_informasi, 
+            tgl_informasi, 
+            isi_informasi, 
+            jenis, 
+            foto
+        )
+        VALUES (
+            '$judul_informasi',
+            '$tanggal',
+            '$isi',
+            'berita',
+            '$nama_gambar'
+        )
+    ");
 
     if ($save) {
-        echo " <script>
-	          alert('Data Berhasil disimpan !');
-	          window.location='?page=informasi';
-	          </script>";
+        echo "<script>
+            alert('Data Berhasil disimpan !');
+            window.location='?page=informasi';
+        </script>";
     }
 }
+
 
 ?>

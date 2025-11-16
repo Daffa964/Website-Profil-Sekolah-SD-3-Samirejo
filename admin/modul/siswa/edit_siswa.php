@@ -60,6 +60,14 @@ while ($d = mysqli_fetch_array($data)) {
                             <input type="text" class="form-control" placeholder="Masukkan Alamat" name="alamat" value="<?= $d['alamat']; ?>">
                         </div>
                         <div class="form-group">
+                            <label>Nama Wali Murid</label>
+                            <input type="text" name="nama_wali" class="form-control" placeholder="Masukan Nama Wali" value="<?= $d['nama_wali']; ?>">
+                        </div>
+                        <div class="form-group">
+                            <label>No. HP Wali (Format: 628...)</label>
+                            <input type="text" name="nohp_wali" class="form-control" placeholder="Contoh: 628123456789" value="<?= $d['nohp_wali']; ?>">
+                        </div>
+                        <div class="form-group">
                             <label>Kelas </label>
                             <select class="form-control" name="id_kelas">
                                 <option>-- Pilih --</option>
@@ -89,28 +97,49 @@ while ($d = mysqli_fetch_array($data)) {
     </div>
 
     <?php
-
     if (isset($_POST['updateSiswa'])) {
-        $updateSiswa = mysqli_query($koneksi, "UPDATE tb_siswa SET 
-			nis='$_POST[nis]', 
-            nisn='$_POST[nisn]', 
-            nama_siswa='$_POST[nama_siswa]',
-            tempat_lahir='$_POST[tempat_lahir]',
-            tanggal_lahir='$_POST[tanggal_lahir]',
-            jk='$_POST[jk]',
-            alamat='$_POST[alamat]',
-            id_kelas='$_POST[id_kelas]'
-			WHERE id_siswa='$_POST[id_siswa]' ");
+        // --- Ambil data dari form ---
+        $id        = $_POST['id_siswa'];
+        $nis       = mysqli_real_escape_string($koneksi, $_POST['nis']);
+        $nisn      = mysqli_real_escape_string($koneksi, $_POST['nisn']);
+        $nama      = mysqli_real_escape_string($koneksi, $_POST['nama_siswa']);
+        $tempat    = mysqli_real_escape_string($koneksi, $_POST['tempat_lahir']);
+        $tgl       = mysqli_real_escape_string($koneksi, $_POST['tanggal_lahir']);
+        $jk        = mysqli_real_escape_string($koneksi, $_POST['jk']);
+        $alamat    = mysqli_real_escape_string($koneksi, $_POST['alamat']);
+        $nama_wali = mysqli_real_escape_string($koneksi, $_POST['nama_wali']);
+        $nohp_wali = mysqli_real_escape_string($koneksi, $_POST['nohp_wali']);
+        $kelas     = mysqli_real_escape_string($koneksi, $_POST['id_kelas']);
 
+        // --- Jalankan query UPDATE ---
+        $updateSiswa = mysqli_query($koneksi, "UPDATE tb_siswa SET 
+        nis='$nis',
+        nisn='$nisn',
+        nama_siswa='$nama',
+        tempat_lahir='$tempat',
+        tanggal_lahir='$tgl',
+        jk='$jk',
+        alamat='$alamat',
+        nama_wali='$nama_wali',
+        nohp_wali='$nohp_wali',
+        id_kelas='$kelas'
+        WHERE id_siswa='$id'");
+
+        // --- Feedback hasil ---
         if ($updateSiswa) {
-            echo " <script>
-	  alert('Data Berhasil diperbarui !');
-	  window.location='?page=siswa';
-	  </script>";
+            echo "<script>
+            alert('Data siswa berhasil diperbarui!');
+            window.location='?page=siswa';
+        </script>";
+        } else {
+            echo "<script>
+            alert('Gagal memperbarui data siswa!');
+            window.location='?page=siswa';
+        </script>";
         }
     }
-
     ?>
+
 
 <?php
 }
